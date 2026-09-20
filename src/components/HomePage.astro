@@ -1,0 +1,85 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from './Nav.astro';
+import Footer from './Footer.astro';
+import type { Locale } from '../i18n/ui';
+import { t, withBase } from '../i18n/ui';
+import { siteMeta, homeCopy, featuredProjects } from '../data/site';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = homeCopy[locale];
+const base = import.meta.env.BASE_URL;
+const title = `${siteMeta.name} — ${copy.role}`;
+const featured = featuredProjects();
+---
+
+<Layout locale={locale} title={title} description={copy.lede}>
+  <div class="site-frame">
+    <Nav locale={locale} />
+    <main class="page-shell flex-1 pb-24 pt-12 sm:pt-16">
+      <section class="max-w-4xl">
+        <p class="eyebrow reveal">{siteMeta.aka}</p>
+        <h1 class="hero-brand reveal reveal-delay-1 mt-5 text-[clamp(2.9rem,9vw,5.75rem)]">
+          {siteMeta.name}
+        </h1>
+        <p class="reveal reveal-delay-2 mt-6 max-w-2xl text-lg font-medium text-fg/85 sm:text-xl">
+          {copy.role}
+        </p>
+        <p class="reveal reveal-delay-2 mt-4 max-w-2xl text-base leading-relaxed text-muted sm:text-[1.05rem]">
+          {copy.lede}
+        </p>
+        <p class="reveal reveal-delay-2 mt-3 text-sm font-medium text-muted">
+          {siteMeta.location[locale]}
+        </p>
+
+        <div class="no-print reveal reveal-delay-3 mt-9 flex flex-wrap gap-3">
+          <a class="btn-primary" href={withBase(base, locale, 'resume')}>{t(locale, 'openResume')}</a>
+          <a class="btn-ghost" href={withBase(base, locale, 'work')}>{t(locale, 'viewWork')}</a>
+          <a class="btn-ghost" href={withBase(base, locale, 'contact')}>{t(locale, 'getInTouch')}</a>
+        </div>
+      </section>
+
+      <p class="mt-14 max-w-2xl text-base leading-relaxed text-muted sm:mt-16">
+        {copy.about}
+      </p>
+
+      <section class="mt-16 sm:mt-20">
+        <p class="eyebrow">{t(locale, 'workEyebrow')}</p>
+        <ul class="work-list mt-7">
+          {
+            featured.map((project) => (
+              <li class="work-item">
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                  <div class="max-w-2xl">
+                    <h2 class="font-display text-2xl font-bold tracking-tight sm:text-[1.7rem]">
+                      {project.name}
+                    </h2>
+                    <p class="mt-1.5 text-sm font-semibold text-accent-deep">
+                      {project.role[locale]} · {project.dates[locale]}
+                    </p>
+                    <p class="mt-3 text-[0.98rem] leading-relaxed text-muted">{project.summary[locale]}</p>
+                  </div>
+                  {project.href && (
+                    <a
+                      class="btn-ghost shrink-0 self-start sm:self-auto"
+                      href={project.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {t(locale, 'open')}
+                    </a>
+                  )}
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+    </main>
+    <Footer locale={locale} />
+  </div>
+</Layout>

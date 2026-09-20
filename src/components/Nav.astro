@@ -1,0 +1,62 @@
+---
+import type { Locale } from '../i18n/ui';
+import { t, withBase, switchLocalePath } from '../i18n/ui';
+import { siteMeta } from '../data/site';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const path = Astro.url.pathname;
+const home = withBase(base, locale);
+const work = withBase(base, locale, 'work');
+const resume = withBase(base, locale, 'resume');
+const contact = withBase(base, locale, 'contact');
+const enHref = switchLocalePath(locale, 'en', path, base);
+const ruHref = switchLocalePath(locale, 'ru', path, base);
+
+const isActive = (href: string) => {
+  const normalized = path.replace(/\/$/, '') || '/';
+  const target = href.replace(/\/$/, '') || '/';
+  return normalized === target;
+};
+---
+
+<header class="site-nav no-print">
+  <nav
+    class="page-shell flex flex-wrap items-center justify-between gap-x-3 gap-y-3 py-3.5 sm:py-4"
+    aria-label={t(locale, 'navAria')}
+  >
+    <a href={home} class="group flex items-baseline gap-2">
+      <span class="font-display text-xl font-extrabold tracking-tight text-fg sm:text-2xl">
+        {siteMeta.shortName}
+      </span>
+      <span class="font-pixel hidden text-[0.55rem] tracking-wide text-accent-deep uppercase sm:inline">
+        {siteMeta.aka}
+      </span>
+    </a>
+    <div class="flex flex-wrap items-center gap-0.5 sm:gap-1">
+      <a
+        href={work}
+        class="nav-link"
+        aria-current={isActive(work) ? 'page' : undefined}>{t(locale, 'navWork')}</a
+      >
+      <a
+        href={resume}
+        class="nav-link"
+        aria-current={isActive(resume) ? 'page' : undefined}>{t(locale, 'navResume')}</a
+      >
+      <a
+        href={contact}
+        class="nav-link"
+        aria-current={isActive(contact) ? 'page' : undefined}>{t(locale, 'navContact')}</a
+      >
+      <div class="lang-switch ml-1.5 sm:ml-2" role="group" aria-label={t(locale, 'langSwitchAria')}>
+        <a href={enHref} aria-current={locale === 'en' ? 'page' : undefined}>EN</a>
+        <a href={ruHref} aria-current={locale === 'ru' ? 'page' : undefined}>RU</a>
+      </div>
+    </div>
+  </nav>
+</header>

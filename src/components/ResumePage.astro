@@ -1,0 +1,163 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from './Nav.astro';
+import Footer from './Footer.astro';
+import type { Locale } from '../i18n/ui';
+import { t } from '../i18n/ui';
+import {
+  siteMeta,
+  resumeCopy,
+  homeCopy,
+  experienceForResume,
+  projectsByGroup,
+  contacts,
+} from '../data/site';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const resume = resumeCopy[locale];
+const title = `${resume.title} — ${siteMeta.name}`;
+const experience = experienceForResume();
+const sideProjects = projectsByGroup('other');
+const topContacts = contacts.filter((c) => ['email', 'phone', 'github', 'telegram'].includes(c.id));
+---
+
+<Layout locale={locale} title={title} description={resume.summary}>
+  <div class="site-frame">
+    <Nav locale={locale} />
+    <main class="print-resume page-shell flex-1 pb-24 pt-10 sm:pt-14">
+      <div class="section-panel px-5 py-7 sm:px-8 sm:py-9">
+        <header class="cv-head">
+          <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <h1 class="hero-brand text-[clamp(2.2rem,5vw,3.1rem)] font-extrabold">
+                {siteMeta.name}
+              </h1>
+              <p class="mt-3 max-w-xl text-base text-muted">{homeCopy[locale].role}</p>
+            </div>
+            <button type="button" class="btn-ghost no-print self-start" id="print-resume">
+              {t(locale, 'printResume')}
+            </button>
+          </div>
+          <p class="cv-contacts">
+            {
+              topContacts.map((item, i) => (
+                <>
+                  {i > 0 && (
+                    <span class="text-border" aria-hidden="true">
+                      ·
+                    </span>
+                  )}
+                  {item.href ? <a href={item.href}>{item.value}</a> : <span>{item.value}</span>}
+                </>
+              ))
+            }
+            <span class="text-border" aria-hidden="true">·</span>
+            <span>{siteMeta.location[locale]}</span>
+          </p>
+        </header>
+
+        <section class="cv-block">
+          <h2 class="cv-h2">{t(locale, 'resumeSummary')}</h2>
+          <p class="max-w-3xl text-[0.95rem] leading-relaxed text-fg/90">{resume.summary}</p>
+        </section>
+
+        <section class="cv-block">
+          <h2 class="cv-h2">{t(locale, 'resumeExperience')}</h2>
+          <ul class="space-y-7">
+            {
+              experience.map((job) => (
+                <li>
+                  <div class="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between">
+                    <h3 class="font-display text-lg font-bold tracking-tight">{job.name}</h3>
+                    <p class="text-sm font-medium text-muted">{job.dates[locale]}</p>
+                  </div>
+                  <p class="text-sm font-semibold text-accent-deep">{job.role[locale]}</p>
+                  <ul class="cv-bullets">
+                    {job.bullets[locale].map((item) => (
+                      <li>{item}</li>
+                    ))}
+                  </ul>
+                </li>
+              ))
+            }
+          </ul>
+        </section>
+
+        <section class="cv-block">
+          <h2 class="cv-h2">{t(locale, 'resumeProjects')}</h2>
+          <ul class="space-y-6">
+            {
+              sideProjects.map((project) => (
+                <li>
+                  <div class="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between">
+                    <h3 class="font-display text-lg font-bold tracking-tight">{project.name}</h3>
+                    <p class="text-sm font-medium text-muted">{project.dates[locale]}</p>
+                  </div>
+                  <p class="mt-1 max-w-3xl text-[0.95rem] text-fg/85">{project.summary[locale]}</p>
+                  {project.href && (
+                    <a
+                      class="mt-1 inline-block text-sm font-semibold text-accent-deep hover:underline"
+                      href={project.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {project.href.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+                    </a>
+                  )}
+                </li>
+              ))
+            }
+          </ul>
+        </section>
+
+        <section class="cv-block">
+          <h2 class="cv-h2">{t(locale, 'resumeSkills')}</h2>
+          <ul class="space-y-3">
+            {
+              resume.skillGroups.map((group) => (
+                <li>
+                  <p class="text-sm font-bold">{group.name}</p>
+                  <p class="text-sm text-muted">{group.items}</p>
+                </li>
+              ))
+            }
+          </ul>
+        </section>
+
+        <section class="cv-block">
+          <h2 class="cv-h2">{t(locale, 'resumeLanguages')}</h2>
+          <ul class="grid gap-2 sm:grid-cols-2">
+            {
+              resume.languages.map((lang) => (
+                <li class="flex items-baseline justify-between gap-4 text-sm sm:max-w-xs">
+                  <span class="font-semibold">{lang.name}</span>
+                  <span class="text-muted">{lang.level}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </section>
+
+        <section class="cv-block">
+          <h2 class="cv-h2">{t(locale, 'resumeEducation')}</h2>
+          <div class="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between">
+            <div>
+              <h3 class="font-display text-lg font-bold tracking-tight">{resume.education.school}</h3>
+              <p class="text-sm text-muted">{resume.education.detail}</p>
+            </div>
+            <p class="text-sm font-medium text-muted">{resume.education.dates}</p>
+          </div>
+        </section>
+      </div>
+    </main>
+    <Footer locale={locale} />
+  </div>
+</Layout>
+
+<script>
+  document.getElementById('print-resume')?.addEventListener('click', () => window.print());
+</script>
