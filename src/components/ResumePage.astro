@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Nav from './Nav.astro';
 import Footer from './Footer.astro';
+import ProjectLinks from './ProjectLinks.astro';
 import type { Locale } from '../i18n/ui';
 import { t } from '../i18n/ui';
 import {
@@ -9,7 +10,7 @@ import {
   resumeCopy,
   homeCopy,
   experienceForResume,
-  projectsByGroup,
+  resumeProjects,
   contacts,
 } from '../data/site';
 
@@ -21,66 +22,58 @@ const { locale } = Astro.props;
 const resume = resumeCopy[locale];
 const title = `${resume.title} — ${siteMeta.name}`;
 const experience = experienceForResume();
-const sideProjects = projectsByGroup('other');
+const sideProjects = resumeProjects();
 const topContacts = contacts.filter((c) => ['email', 'phone', 'github', 'telegram'].includes(c.id));
 ---
 
 <Layout locale={locale} title={title} description={resume.summary}>
   <div class="site-frame">
     <Nav locale={locale} />
-    <main class="print-resume page-shell flex-1 pb-24 pt-10 sm:pt-14">
-      <div class="section-panel px-5 py-7 sm:px-8 sm:py-9">
+    <main class="print-resume page-shell flex-1">
+      <div class="sheet panel">
         <header class="cv-head">
-          <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div class="cv-head__row">
             <div>
-              <h1 class="hero-brand text-[clamp(2.2rem,5vw,3.1rem)] font-extrabold">
-                {siteMeta.name}
-              </h1>
-              <p class="mt-3 max-w-xl text-base text-muted">{homeCopy[locale].role}</p>
+              <h1 class="cv-name">{siteMeta.name}</h1>
+              <p class="cv-role">{homeCopy[locale].role}</p>
             </div>
-            <button type="button" class="btn-ghost no-print self-start" id="print-resume">
+            <button type="button" class="btn btn--ghost btn--small no-print" id="print-resume">
               {t(locale, 'printResume')}
             </button>
           </div>
-          <p class="cv-contacts">
+          <ul class="cv-contacts">
             {
-              topContacts.map((item, i) => (
-                <>
-                  {i > 0 && (
-                    <span class="text-border" aria-hidden="true">
-                      ·
-                    </span>
-                  )}
-                  {item.href ? <a href={item.href}>{item.value}</a> : <span>{item.value}</span>}
-                </>
+              topContacts.map((item) => (
+                <li>{item.href ? <a href={item.href}>{item.value}</a> : <span>{item.value}</span>}</li>
               ))
             }
-            <span class="text-border" aria-hidden="true">·</span>
-            <span>{siteMeta.location[locale]}</span>
-          </p>
+            <li>{siteMeta.location[locale]}</li>
+          </ul>
         </header>
 
         <section class="cv-block">
           <h2 class="cv-h2">{t(locale, 'resumeSummary')}</h2>
-          <p class="max-w-3xl text-[0.95rem] leading-relaxed text-fg/90">{resume.summary}</p>
+          <p class="cv-summary">{resume.summary}</p>
         </section>
 
         <section class="cv-block">
           <h2 class="cv-h2">{t(locale, 'resumeExperience')}</h2>
-          <ul class="space-y-7">
+          <ul class="cv-list">
             {
               experience.map((job) => (
-                <li>
-                  <div class="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between">
-                    <h3 class="font-display text-lg font-bold tracking-tight">{job.name}</h3>
-                    <p class="text-sm font-medium text-muted">{job.dates[locale]}</p>
+                <li class="cv-item">
+                  <div class="cv-item__head">
+                    <h3 class="cv-item__name">{job.name}</h3>
+                    <p class="cv-item__dates">{job.dates[locale]}</p>
                   </div>
-                  <p class="text-sm font-semibold text-accent-deep">{job.role[locale]}</p>
+                  <p class="cv-item__role">{job.role[locale]}</p>
+                  {job.stack && <p class="cv-item__stack">{job.stack}</p>}
                   <ul class="cv-bullets">
                     {job.bullets[locale].map((item) => (
                       <li>{item}</li>
                     ))}
                   </ul>
+                  <ProjectLinks project={job} full class="cv-item__links" />
                 </li>
               ))
             }
@@ -89,68 +82,60 @@ const topContacts = contacts.filter((c) => ['email', 'phone', 'github', 'telegra
 
         <section class="cv-block">
           <h2 class="cv-h2">{t(locale, 'resumeProjects')}</h2>
-          <ul class="space-y-6">
+          <ul class="cv-list">
             {
               sideProjects.map((project) => (
-                <li>
-                  <div class="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between">
-                    <h3 class="font-display text-lg font-bold tracking-tight">{project.name}</h3>
-                    <p class="text-sm font-medium text-muted">{project.dates[locale]}</p>
+                <li class="cv-item">
+                  <div class="cv-item__head">
+                    <h3 class="cv-item__name">{project.name}</h3>
+                    <p class="cv-item__dates">{project.dates[locale]}</p>
                   </div>
-                  <p class="mt-1 max-w-3xl text-[0.95rem] text-fg/85">{project.summary[locale]}</p>
-                  {project.href && (
-                    <a
-                      class="mt-1 inline-block text-sm font-semibold text-accent-deep hover:underline"
-                      href={project.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {project.href.replace(/^https?:\/\//, '').replace(/\/$/, '')}
-                    </a>
-                  )}
+                  <p class="cv-item__text">{project.summary[locale]}</p>
+                  {project.stack && <p class="cv-item__stack">{project.stack}</p>}
+                  <ProjectLinks project={project} full class="cv-item__links" />
                 </li>
               ))
             }
           </ul>
         </section>
 
-        <section class="cv-block">
-          <h2 class="cv-h2">{t(locale, 'resumeSkills')}</h2>
-          <ul class="space-y-3">
-            {
-              resume.skillGroups.map((group) => (
-                <li>
-                  <p class="text-sm font-bold">{group.name}</p>
-                  <p class="text-sm text-muted">{group.items}</p>
-                </li>
-              ))
-            }
-          </ul>
-        </section>
+        <div class="cv-cols">
+          <section class="cv-block">
+            <h2 class="cv-h2">{t(locale, 'resumeSkills')}</h2>
+            <dl class="cv-defs">
+              {
+                resume.skillGroups.map((group) => (
+                  <>
+                    <dt>{group.name}</dt>
+                    <dd>{group.items}</dd>
+                  </>
+                ))
+              }
+            </dl>
+          </section>
 
-        <section class="cv-block">
-          <h2 class="cv-h2">{t(locale, 'resumeLanguages')}</h2>
-          <ul class="grid gap-2 sm:grid-cols-2">
-            {
-              resume.languages.map((lang) => (
-                <li class="flex items-baseline justify-between gap-4 text-sm sm:max-w-xs">
-                  <span class="font-semibold">{lang.name}</span>
-                  <span class="text-muted">{lang.level}</span>
-                </li>
-              ))
-            }
-          </ul>
-        </section>
+          <section class="cv-block">
+            <h2 class="cv-h2">{t(locale, 'resumeLanguages')}</h2>
+            <dl class="cv-defs cv-defs--tight">
+              {
+                resume.languages.map((lang) => (
+                  <>
+                    <dt>{lang.name}</dt>
+                    <dd>{lang.level}</dd>
+                  </>
+                ))
+              }
+            </dl>
+          </section>
+        </div>
 
         <section class="cv-block">
           <h2 class="cv-h2">{t(locale, 'resumeEducation')}</h2>
-          <div class="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between">
-            <div>
-              <h3 class="font-display text-lg font-bold tracking-tight">{resume.education.school}</h3>
-              <p class="text-sm text-muted">{resume.education.detail}</p>
-            </div>
-            <p class="text-sm font-medium text-muted">{resume.education.dates}</p>
+          <div class="cv-item__head">
+            <h3 class="cv-item__name">{resume.education.school}</h3>
+            <p class="cv-item__dates">{resume.education.dates}</p>
           </div>
+          <p class="cv-item__text">{resume.education.detail}</p>
         </section>
       </div>
     </main>

@@ -2,9 +2,10 @@
 import Layout from '../layouts/Layout.astro';
 import Nav from './Nav.astro';
 import Footer from './Footer.astro';
+import ProjectLinks from './ProjectLinks.astro';
 import type { Locale } from '../i18n/ui';
-import { t, withBase } from '../i18n/ui';
-import { siteMeta, homeCopy, featuredProjects } from '../data/site';
+import { t, withBase, intlLocale } from '../i18n/ui';
+import { siteMeta, homeCopy, featuredProjects, stats } from '../data/site';
 
 interface Props {
   locale: Locale;
@@ -15,65 +16,135 @@ const copy = homeCopy[locale];
 const base = import.meta.env.BASE_URL;
 const title = `${siteMeta.name} — ${copy.role}`;
 const featured = featuredProjects();
+const numberLocale = intlLocale[locale];
+const [firstName, ...restName] = siteMeta.name.split(' ');
+
+// Latency trace: p95 query time before (1.4 s) and after (18 ms) the Juniper index work.
+// Deterministic pseudo-random noise so the build output is stable.
+const W = 1000;
+const TOP = 46; // 1.4 s
+const BOTTOM = 204; // 18 ms
+const SPLIT = 560;
+const N = 112;
+let seed = 7;
+const rand = () => {
+  seed = (seed * 1664525 + 1013904223) % 4294967296;
+  return seed / 4294967296;
+};
+const before: string[] = [];
+const after: string[] = [];
+for (let i = 0; i <= N; i++) {
+  const x = (i / N) * W;
+  if (x <= SPLIT) {
+    const spike = rand() > 0.9 ? 34 : 0;
+    const y = TOP + 34 + Math.sin(i * 0.42) * 15 + (rand() - 0.5) * 30 - spike;
+    before.push(`${x.toFixed(1)},${Math.max(TOP - 8, y).toFixed(1)}`);
+  } else {
+    const y = BOTTOM + (rand() - 0.5) * 5;
+    after.push(`${x.toFixed(1)},${y.toFixed(1)}`);
+  }
+}
+const lastBefore = before[before.length - 1];
+const dropPath = `M${lastBefore} L${SPLIT + 10},${BOTTOM}`;
+const beforePath = `M${before.join(' L')}`;
+const afterPath = `M${SPLIT + 10},${BOTTOM} L${after.join(' L')}`;
 ---
 
 <Layout locale={locale} title={title} description={copy.lede}>
   <div class="site-frame">
     <Nav locale={locale} />
-    <main class="page-shell flex-1 pb-24 pt-12 sm:pt-16">
-      <section class="max-w-4xl">
-        <p class="eyebrow reveal">{siteMeta.aka}</p>
-        <h1 class="hero-brand reveal reveal-delay-1 mt-5 text-[clamp(2.9rem,9vw,5.75rem)]">
-          {siteMeta.name}
+    <main class="page-shell flex-1">
+      <section class="hero">
+        <p class="status">
+          <span class="status__dot" aria-hidden="true"></span>
+          {t(locale, 'statusPill')}
+        </p>
+        <h1 class="hero__name">
+          <span>{firstName}</span>
+          <span>{restName.join(' ')}</span>
         </h1>
-        <p class="reveal reveal-delay-2 mt-6 max-w-2xl text-lg font-medium text-fg/85 sm:text-xl">
-          {copy.role}
-        </p>
-        <p class="reveal reveal-delay-2 mt-4 max-w-2xl text-base leading-relaxed text-muted sm:text-[1.05rem]">
-          {copy.lede}
-        </p>
-        <p class="reveal reveal-delay-2 mt-3 text-sm font-medium text-muted">
-          {siteMeta.location[locale]}
-        </p>
 
-        <div class="no-print reveal reveal-delay-3 mt-9 flex flex-wrap gap-3">
-          <a class="btn-primary" href={withBase(base, locale, 'resume')}>{t(locale, 'openResume')}</a>
-          <a class="btn-ghost" href={withBase(base, locale, 'work')}>{t(locale, 'viewWork')}</a>
-          <a class="btn-ghost" href={withBase(base, locale, 'contact')}>{t(locale, 'getInTouch')}</a>
+        <div class="hero__grid">
+          <div class="hero__copy">
+            <p class="hero__role">{copy.role}</p>
+            <p class="hero__lede">{copy.lede}</p>
+            <p class="hero__where">{siteMeta.location[locale]}</p>
+            <div class="no-print hero__cta">
+              <a class="btn btn--primary" href={withBase(base, locale, 'resume')}>{t(locale, 'openResume')}</a>
+              <a class="btn btn--ghost" href={withBase(base, locale, 'work')}>{t(locale, 'viewWork')}</a>
+              <a class="btn btn--ghost" href={withBase(base, locale, 'contact')}>{t(locale, 'getInTouch')}</a>
+            </div>
+          </div>
+
+          <figure class="trace panel" aria-label={`${t(locale, 'traceTitle')}: 1.4 s → 18 ms`}>
+            <figcaption class="trace__head">
+              <span class="trace__title">{t(locale, 'traceTitle')}</span>
+              <span class="trace__source">{t(locale, 'traceSource')}</span>
+            </figcaption>
+            <div class="trace__plot">
+              <svg viewBox={`0 0 ${W} 250`} role="img" aria-hidden="true">
+                <defs>
+                  <linearGradient id="fade-after" x1="0" x2="0" y1="0" y2="1">
+                    <stop offset="0" stop-color="#5bf5b0" stop-opacity="0.22"></stop>
+                    <stop offset="1" stop-color="#5bf5b0" stop-opacity="0"></stop>
+                  </linearGradient>
+                </defs>
+                <line class="trace__grid" x1="0" x2={W} y1={TOP} y2={TOP}></line>
+                <line class="trace__grid" x1="0" x2={W} y1={BOTTOM} y2={BOTTOM}></line>
+                <line class="trace__grid trace__grid--faint" x1="0" x2={W} y1={(TOP + BOTTOM) / 2} y2={(TOP + BOTTOM) / 2}
+                ></line>
+                <line class="trace__marker" x1={SPLIT + 10} x2={SPLIT + 10} y1="14" y2="236"></line>
+                <path class="trace__area" d={`${afterPath} L${W},250 L${SPLIT + 10},250 Z`} fill="url(#fade-after)"></path>
+                <path class="trace__line trace__line--before" d={beforePath} pathLength="1"></path>
+                <path class="trace__line trace__line--drop" d={dropPath} pathLength="1"></path>
+                <path class="trace__line trace__line--after" d={afterPath} pathLength="1"></path>
+              </svg>
+              <p class="trace__note">{t(locale, 'traceMarker')}</p>
+            </div>
+            <div class="trace__read">
+              <p class="trace__value trace__value--before">
+                <span>{t(locale, 'traceBefore')}</span>
+                <strong>1.4 s</strong>
+              </p>
+              <p class="trace__value trace__value--after">
+                <span>{t(locale, 'traceAfter')}</span>
+                <strong>18 ms</strong>
+              </p>
+            </div>
+            <p class="trace__foot">{t(locale, 'traceFoot')}</p>
+          </figure>
         </div>
       </section>
 
-      <p class="mt-14 max-w-2xl text-base leading-relaxed text-muted sm:mt-16">
-        {copy.about}
-      </p>
+      <section class="metrics-wrap" aria-label={t(locale, 'statsEyebrow')}>
+        <ul class="metrics">
+          {
+            stats.map((stat) => (
+              <li class="metric">
+                <p class="metric__value" data-count={stat.value}>
+                  {stat.value.toLocaleString(numberLocale)}
+                </p>
+                <p class="metric__label">{stat.label[locale]}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
 
-      <section class="mt-16 sm:mt-20">
-        <p class="eyebrow">{t(locale, 'workEyebrow')}</p>
-        <ul class="work-list mt-7">
+      <section class="section">
+        <h2 class="section__title">{t(locale, 'workEyebrow')}</h2>
+        <p class="section__about">{copy.about}</p>
+        <ul class="index">
           {
             featured.map((project) => (
-              <li class="work-item">
-                <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-                  <div class="max-w-2xl">
-                    <h2 class="font-display text-2xl font-bold tracking-tight sm:text-[1.7rem]">
-                      {project.name}
-                    </h2>
-                    <p class="mt-1.5 text-sm font-semibold text-accent-deep">
-                      {project.role[locale]} · {project.dates[locale]}
-                    </p>
-                    <p class="mt-3 text-[0.98rem] leading-relaxed text-muted">{project.summary[locale]}</p>
-                  </div>
-                  {project.href && (
-                    <a
-                      class="btn-ghost shrink-0 self-start sm:self-auto"
-                      href={project.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {t(locale, 'open')}
-                    </a>
-                  )}
+              <li class="index-row">
+                <div class="index-row__id">
+                  <h3 class="index-row__name">{project.name}</h3>
+                  <p class="index-row__role">{project.role[locale]}</p>
+                  <p class="index-row__dates">{project.dates[locale]}</p>
                 </div>
+                <p class="index-row__summary">{project.summary[locale]}</p>
+                <ProjectLinks project={project} class="index-row__links" />
               </li>
             ))
           }

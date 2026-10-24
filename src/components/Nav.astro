@@ -1,6 +1,6 @@
 ---
 import type { Locale } from '../i18n/ui';
-import { t, withBase, switchLocalePath } from '../i18n/ui';
+import { t, withBase, switchLocalePath, locales } from '../i18n/ui';
 import { siteMeta } from '../data/site';
 
 interface Props {
@@ -14,8 +14,10 @@ const home = withBase(base, locale);
 const work = withBase(base, locale, 'work');
 const resume = withBase(base, locale, 'resume');
 const contact = withBase(base, locale, 'contact');
-const enHref = switchLocalePath(locale, 'en', path, base);
-const ruHref = switchLocalePath(locale, 'ru', path, base);
+const langLinks = locales.map((code) => ({
+  code,
+  href: switchLocalePath(locale, code, path, base),
+}));
 
 const isActive = (href: string) => {
   const normalized = path.replace(/\/$/, '') || '/';
@@ -24,38 +26,41 @@ const isActive = (href: string) => {
 };
 ---
 
-<header class="site-nav no-print">
-  <nav
-    class="page-shell flex flex-wrap items-center justify-between gap-x-3 gap-y-3 py-3.5 sm:py-4"
-    aria-label={t(locale, 'navAria')}
-  >
-    <a href={home} class="group flex items-baseline gap-2">
-      <span class="font-display text-xl font-extrabold tracking-tight text-fg sm:text-2xl">
-        {siteMeta.shortName}
-      </span>
-      <span class="font-pixel hidden text-[0.55rem] tracking-wide text-accent-deep uppercase sm:inline">
-        {siteMeta.aka}
-      </span>
+<header class="topbar no-print">
+  <nav class="page-shell topbar__in" aria-label={t(locale, 'navAria')}>
+    <a href={home} class="brand">
+      <span class="brand__mark" aria-hidden="true"></span>
+      <span class="brand__name">{siteMeta.shortName}</span>
     </a>
-    <div class="flex flex-wrap items-center gap-0.5 sm:gap-1">
-      <a
-        href={work}
-        class="nav-link"
-        aria-current={isActive(work) ? 'page' : undefined}>{t(locale, 'navWork')}</a
+    <div class="topbar__links">
+      <a href={work} class="nav-link" aria-current={isActive(work) ? 'page' : undefined}
+        >{t(locale, 'navWork')}</a
       >
-      <a
-        href={resume}
-        class="nav-link"
-        aria-current={isActive(resume) ? 'page' : undefined}>{t(locale, 'navResume')}</a
+      <a href={resume} class="nav-link" aria-current={isActive(resume) ? 'page' : undefined}
+        >{t(locale, 'navResume')}</a
       >
-      <a
-        href={contact}
-        class="nav-link"
-        aria-current={isActive(contact) ? 'page' : undefined}>{t(locale, 'navContact')}</a
+      <a href={contact} class="nav-link" aria-current={isActive(contact) ? 'page' : undefined}
+        >{t(locale, 'navContact')}</a
       >
-      <div class="lang-switch ml-1.5 sm:ml-2" role="group" aria-label={t(locale, 'langSwitchAria')}>
-        <a href={enHref} aria-current={locale === 'en' ? 'page' : undefined}>EN</a>
-        <a href={ruHref} aria-current={locale === 'ru' ? 'page' : undefined}>RU</a>
+    </div>
+    <div class="topbar__end">
+      <p class="clock">
+        <span class="clock__city">{t(locale, 'clockLabel')}</span>
+        <span class="clock__time" data-clock>--:--</span>
+      </p>
+      <div class="lang-switch" role="group" aria-label={t(locale, 'langSwitchAria')}>
+        {
+          langLinks.map((link) => (
+            <a
+              href={link.href}
+              hreflang={link.code}
+              lang={link.code}
+              aria-current={locale === link.code ? 'page' : undefined}
+            >
+              {link.code.toUpperCase()}
+            </a>
+          ))
+        }
       </div>
     </div>
   </nav>

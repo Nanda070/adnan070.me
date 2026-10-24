@@ -18,17 +18,13 @@ const home = withBase(import.meta.env.BASE_URL, locale);
 <Layout locale={locale} title={title} description={t(locale, 'notFoundLead')}>
   <div class="site-frame">
     <Nav locale={locale} />
-    <main class="page-shell flex-1 pb-24 pt-14 sm:pt-20">
-      <div class="section-panel max-w-3xl px-6 py-10 sm:px-10 sm:py-14">
-        <p class="eyebrow reveal">{t(locale, 'notFoundKicker')}</p>
-        <h1
-          class="hero-brand reveal reveal-delay-1 mt-5 text-[clamp(2.8rem,9vw,5.5rem)] font-extrabold"
-        >
-          {t(locale, 'notFoundTitle')}
-        </h1>
-        <p class="reveal reveal-delay-2 mt-6 max-w-xl text-lg text-muted">{t(locale, 'notFoundLead')}</p>
-        <a class="btn-primary reveal reveal-delay-3 mt-8 inline-flex" href={home}>{t(locale, 'backHome')}</a>
-      </div>
+    <main class="page-shell flex-1">
+      <header class="page-head">
+        <p class="lost__code">{t(locale, 'notFoundKicker')}</p>
+        <h1 class="page-head__title">{t(locale, 'notFoundTitle')}</h1>
+        <p class="page-head__lead">{t(locale, 'notFoundLead')}</p>
+        <a class="btn btn--primary lost__back" href={home}>{t(locale, 'backHome')}</a>
+      </header>
     </main>
     <Footer locale={locale} />
   </div>

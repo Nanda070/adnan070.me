@@ -13,27 +13,23 @@ const four = withBase(import.meta.env.BASE_URL, locale, '404');
 ---
 
 <footer class="site-footer no-print">
-  <div
-    class="page-shell flex flex-col gap-4 py-9 text-sm text-muted sm:flex-row sm:items-center sm:justify-between"
-  >
-    <p class="leading-relaxed">
-      <span class="font-display text-base font-bold text-fg">{siteMeta.name}</span>
-      <span class="mx-2 text-border">·</span>
+  <div class="page-shell site-footer__in">
+    <p class="site-footer__id">
+      <span class="site-footer__name">{siteMeta.name}</span>
+      <span class="site-footer__sep" aria-hidden="true"></span>
       <span>{siteMeta.aka}</span>
-      <span class="mx-2 text-border">·</span>
-      © {year}
+      <span class="site-footer__sep" aria-hidden="true"></span>
+      <span>{year}</span>
     </p>
-    <div class="flex flex-wrap gap-x-5 gap-y-2">
-      <a class="link-soft font-medium" href={siteMeta.githubHref} target="_blank" rel="noopener noreferrer"
-        >GitHub</a
-      >
-      <a class="link-soft font-medium" href={siteMeta.telegramHref} target="_blank" rel="noopener noreferrer"
+    <div class="site-footer__links">
+      <a class="link-soft" href={siteMeta.githubHref} target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a class="link-soft" href={siteMeta.telegramHref} target="_blank" rel="noopener noreferrer"
         >Telegram</a
       >
-      <a class="link-soft font-medium" href={siteMeta.cardHref} target="_blank" rel="noopener noreferrer"
+      <a class="link-soft" href={siteMeta.cardHref} target="_blank" rel="noopener noreferrer"
         >nanda.is-a.dev</a
       >
-      <a class="link-soft font-medium" href={four}>404</a>
+      <a class="link-soft" href={four}>404</a>
     </div>
   </div>
 </footer>

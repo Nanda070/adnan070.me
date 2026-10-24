@@ -1,7 +1,11 @@
-export type Locale = 'en' | 'ru';
+export type Locale = 'en' | 'hu' | 'ru';
 
-export const locales: Locale[] = ['en', 'ru'];
+export const locales: Locale[] = ['en', 'hu', 'ru'];
 export const defaultLocale: Locale = 'en';
+
+/** Locale tags for Intl formatting and Open Graph. */
+export const intlLocale: Record<Locale, string> = { en: 'en-GB', hu: 'hu-HU', ru: 'ru-RU' };
+export const ogLocale: Record<Locale, string> = { en: 'en_US', hu: 'hu_HU', ru: 'ru_RU' };
 
 export const ui = {
   en: {
@@ -38,6 +42,17 @@ export const ui = {
     notFoundLead: 'This URL does not exist.',
     backHome: 'Back home',
     present: 'Present',
+    statsEyebrow: 'By the numbers',
+    stackEyebrow: 'Stack',
+    scrollHint: 'Scroll',
+    statusPill: 'Open to part-time backend roles, up to 30 h/week',
+    traceTitle: 'Query time, p95',
+    traceSource: 'Juniper, PostgreSQL',
+    traceBefore: 'Before',
+    traceAfter: 'After',
+    traceMarker: 'Seq Scan replaced by keyset pagination and a covering index',
+    traceFoot: 'About 77× faster. Peak database CPU 85% → 15%.',
+    clockLabel: 'Budapest',
   },
   ru: {
     navAria: 'Навигация',
@@ -73,6 +88,63 @@ export const ui = {
     notFoundLead: 'Такого адреса нет.',
     backHome: 'На главную',
     present: 'н. в.',
+    statsEyebrow: 'В цифрах',
+    stackEyebrow: 'Стек',
+    scrollHint: 'Вниз',
+    statusPill: 'Открыт к part-time backend ролям, до 30 ч/нед',
+    traceTitle: 'Время запроса, p95',
+    traceSource: 'Juniper, PostgreSQL',
+    traceBefore: 'До',
+    traceAfter: 'После',
+    traceMarker: 'Seq Scan заменён на keyset-пагинацию и покрывающий индекс',
+    traceFoot: 'Примерно в 77 раз быстрее. Пиковый CPU базы 85% → 15%.',
+    clockLabel: 'Будапешт',
+  },
+  hu: {
+    navAria: 'Fő navigáció',
+    navHome: 'Kezdőlap',
+    navWork: 'Munkák',
+    navResume: 'Önéletrajz',
+    navContact: 'Kapcsolat',
+    langSwitchAria: 'Nyelv',
+    openResume: 'Önéletrajz',
+    viewWork: 'Munkák',
+    getInTouch: 'Kapcsolat',
+    printResume: 'Nyomtatás / PDF',
+    open: 'Megnyitás',
+    copy: 'Másolás',
+    copied: 'Másolva',
+    workEyebrow: 'Válogatott munkák',
+    workLead: 'A termékek és projektek teljes története — előbb a kulcsszerepek, utána minden más.',
+    workGroupLead: 'Termékek és szerepek',
+    workGroupOther: 'További projektek',
+    resumeEyebrow: 'Önéletrajz',
+    resumeSummary: 'Összefoglaló',
+    resumeExperience: 'Tapasztalat',
+    resumeProjects: 'Projektek',
+    resumeEducation: 'Tanulmányok',
+    resumeSkills: 'Készségek',
+    resumeLanguages: 'Nyelvek',
+    resumeContact: 'Kapcsolat',
+    contactEyebrow: 'Kapcsolat',
+    contactLead: 'Közvetlen elérhetőségek. A nanda.is-a.dev névjegykártya a tömör nyilvános arcom.',
+    cardLabel: 'Névjegykártya',
+    notFoundKicker: '404',
+    notFoundTitle: 'Az oldal nem található',
+    notFoundLead: 'Ez a cím nem létezik.',
+    backHome: 'Vissza a kezdőlapra',
+    present: 'jelenleg',
+    statsEyebrow: 'Számokban',
+    stackEyebrow: 'Stack',
+    scrollHint: 'Görgess',
+    statusPill: 'Részmunkaidős backend munkára nyitott, heti 30 óráig',
+    traceTitle: 'Lekérdezési idő, p95',
+    traceSource: 'Juniper, PostgreSQL',
+    traceBefore: 'Előtte',
+    traceAfter: 'Utána',
+    traceMarker: 'A Seq Scan helyett keyset lapozás és fedő index',
+    traceFoot: 'Nagyjából 77-szer gyorsabb. Az adatbázis csúcs CPU-terhelése 85% → 15%.',
+    clockLabel: 'Budapest',
   },
 } as const;
 
@@ -101,7 +173,7 @@ export function switchLocalePath(current: Locale, next: Locale, pathname: string
   const root = base.endsWith('/') ? base.slice(0, -1) : base;
   let rest = pathname;
   if (root && rest.startsWith(root)) rest = rest.slice(root.length);
-  rest = rest.replace(/^\/ru(?=\/|$)/, '');
+  rest = rest.replace(/^\/(?:ru|hu)(?=\/|$)/, '');
   rest = rest.replace(/^\/+|\/+$/g, '');
   if (rest === '404' || rest.endsWith('/404')) {
     return withBase(base, next, '404');
