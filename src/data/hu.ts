@@ -48,11 +48,12 @@ export const huProjects: Record<string, HuProject> = {
   valqauym: {
     dates: '2026 — jelenleg',
     role: 'Alkotó, a fejlesztőcsapat vezetője',
-    summary: 'Bot, weboldal, admin panel és gazdaság a Val Qauym kazahsztáni VALORANT-közösségnek.',
+    summary: 'A bot, amely az egész discord.gg/valqauym szervert vezeti — Kazahsztán legnagyobb VALORANT-közösségét —, valamint a weboldala, admin panelje és gazdasága.',
     bullets: [
       'Én hoztam létre a projektet, és én vezetem a fejlesztőcsapatot; a tulajdonjog később egy másik személyhez került, aki a nyilvános arca lett. A szerzőség a valqauym.kz credits oldalán szerepel.',
-      'Esti 5v5 custom meccsek teljes folyamata: lobbik, csapatkiegyenlítés, pályaszavazás, hangcsatornákba mozgatás, automatikus meccszárás és szezonális Elo a csapat győzelmi esélye és a játékos ACS/KDA értéke alapján.',
-      'Egy folyamat futtatja a botot (~33 modul) és a HTTP API-t (~44 csoport) egy React weboldal és admin panel mögött: szintek, érmék és bolt, családok, tornák, böngészős játékesemények WebSocketen. ~945 tagú szerver (2026. november).',
+      'A bot az egész szervert viszi: újoncok és szerepkörök, XP, érmék, bolt, kisállatok és családok, szezonok és kihívások, privát hangszobák, moderáció automoddal és anti-raiddel, események és tornák.',
+      'Auto 5v5 customok hangcsatornából: rang szerint kiegyenlített csapatok, hangmozgatás, meccsstatisztika a HenrikDev API-ból és szezonális Elo; eddig 700+ auto custom.',
+      'Egy Python-folyamat futtatja a botot (~33 modul) és az aiohttp API-t (~44 csoport) egy React oldal mögött: stábpanel Discord-belépéssel és nyilvános oldalak lobbikhoz, meccsekhez, táblákhoz és profilokhoz. ~945 tag (2026. november).',
     ],
   },
   lookup: {

@@ -32,19 +32,19 @@ export const homeCopy: Record<
 > = {
   en: {
     role: 'Backend Developer — Discord & community platforms',
-    lede: 'I design and ship Discord products used by large communities. Creator and development lead of Val Qauym, the bot, site and economy of a VALORANT community in Kazakhstan; former core developer of Juniper (2019–2025), a Discord bot that served 1.29M servers; founder of Cheterin. Based in Budapest, Hungary.',
+    lede: 'I design and ship Discord products used by large communities. Creator and development lead of Val Qauym, the bot that runs the largest VALORANT community in Kazakhstan; former core developer of Juniper (2019–2025), a Discord bot that served 1.29M servers; founder of Cheterin. Based in Budapest, Hungary.',
     about:
       'Born in Azerbaijan. Based in Budapest, Hungary, reading Computer Science at ELTE, open to the EU and remote. I build bots, community platforms, and the systems around them.',
   },
   ru: {
     role: 'Backend Developer — Discord и платформы сообществ',
-    lede: 'Проектирую и выпускаю Discord-продукты для больших сообществ. Создатель и руководитель разработки Val Qauym — бота, сайта и экономики VALORANT-сообщества Казахстана; бывший core-разработчик Juniper (2019–2025), Discord-бота, обслужившего 1,29 млн серверов; основатель Cheterin. Живу в Будапеште, Венгрия.',
+    lede: 'Проектирую и выпускаю Discord-продукты для больших сообществ. Создатель и руководитель разработки Val Qauym — бота, который ведёт крупнейшее казахстанское сообщество по VALORANT; бывший core-разработчик Juniper (2019–2025), Discord-бота, обслужившего 1,29 млн серверов; основатель Cheterin. Живу в Будапеште, Венгрия.',
     about:
       'Родился в Азербайджане. Живу в Будапеште, Венгрия, бакалавриат Computer Science в ELTE, открыт к EU и remote. Делаю ботов, платформы для сообществ и системы вокруг них.',
   },
   hu: {
     role: 'Backend fejlesztő — Discord- és közösségi platformok',
-    lede: 'Nagy közösségek által használt Discord-termékeket tervezek és építek. A Val Qauym alkotója és fejlesztési vezetője — egy kazahsztáni VALORANT-közösség botja, weboldala és gazdasága; a Juniper egykori core fejlesztője (2019–2025), amelyet 1,29 millió szerver használt; a Cheterin alapítója. Budapesten élek.',
+    lede: 'Nagy közösségek által használt Discord-termékeket tervezek és építek. A Val Qauym alkotója és fejlesztési vezetője — a bot, amely Kazahsztán legnagyobb VALORANT-közösségét vezeti; a Juniper egykori core fejlesztője (2019–2025), amelyet 1,29 millió szerver használt; a Cheterin alapítója. Budapesten élek.',
     about:
       'Azerbajdzsánban születtem. Budapesten élek, az ELTE-n tanulok informatikát, nyitott vagyok az EU-s és a távmunka lehetőségekre. Botokat, közösségi platformokat és a körülöttük lévő rendszereket építem.',
   },
@@ -216,19 +216,21 @@ export const projects: Project[] = [
     stack: 'Python, discord.py, aiohttp, React, Vite, TypeScript, SQLite, nginx, systemd',
     role: { en: 'Creator, development team lead', ru: 'Создатель, руководитель команды разработки' },
     summary: {
-      en: 'Bot, website, admin panel and economy for Val Qauym, a VALORANT community in Kazakhstan.',
-      ru: 'Бот, сайт, админ-панель и экономика Val Qauym, VALORANT-сообщества Казахстана.',
+      en: 'The bot that runs the whole discord.gg/valqauym server, the largest VALORANT community in Kazakhstan, plus its website, admin panel and economy.',
+      ru: 'Бот, который управляет всем сервером discord.gg/valqauym, крупнейшим казахстанским сообществом по VALORANT, а также его сайт, админ-панель и экономика.',
     },
     bullets: {
       en: [
         'Created the project and lead its development team; ownership later passed to another person, who became its public face. Authorship is listed in the credits on valqauym.kz.',
-        'Nightly 5v5 customs end to end: lobbies, team balancing, map vote, voice moves, automatic match closing and a seasonal Elo built from team win chance and per-player ACS/KDA.',
-        'One process runs the bot (~33 modules) and the HTTP API (~44 groups) behind a React site and admin panel: levels, coins and shop, families, tournaments, and browser game events over WebSocket. Server of ~945 members (Nov 2026).',
+        'The bot runs the server end to end: newcomers and roles, XP, coins, shop, pets and families, seasons and challenges, private voice rooms, moderation with automod and anti-raid, events and tournaments.',
+        'Auto customs 5v5 from a voice channel: rank-balanced teams, voice moves, match stats pulled from the HenrikDev API and a seasonal Elo; 700+ auto customs so far.',
+        'One Python process runs the bot (~33 modules) and the aiohttp API (~44 groups) behind a React site: a staff panel with Discord sign-in and public pages for lobbies, matches, tables and profiles. ~945 members (Nov 2026).',
       ],
       ru: [
         'Создал проект и руковожу командой разработки; владение позже перешло другому человеку, который стал его публичным лицом. Авторство указано в credits на valqauym.kz.',
-        'Ежевечерние кастомки 5v5 целиком: лобби, баланс команд, голосование за карту, перенос в войсы, автозакрытие матча и сезонное Elo по шансу победы команды и ACS/KDA игрока.',
-        'Один процесс держит бота (~33 модуля) и HTTP API (~44 группы) за React-сайтом и админ-панелью: уровни, монеты и магазин, семьи, турниры, игровые ивенты в браузере через WebSocket. Сервер на ~945 участников (ноябрь 2026).',
+        'Бот ведёт сервер целиком: новички и роли, XP, монеты, магазин, питомцы и семьи, сезоны и челленджи, приватные войсы, модерация с автомодом и антирейдом, ивенты и турниры.',
+        'Автокастомки 5v5 из голосового канала: баланс команд по рангу, перенос по войсам, статистика матча из HenrikDev API и сезонное эло; уже 700+ автокастомок.',
+        'Один Python-процесс держит бота (~33 модуля) и aiohttp API (~44 группы) за React-сайтом: панель администрации со входом через Discord и публичные страницы лобби, матчей, таблиц и профилей. ~945 участников (ноябрь 2026).',
       ],
     },
   },
