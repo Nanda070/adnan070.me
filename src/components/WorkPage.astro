@@ -5,7 +5,8 @@ import Footer from './Footer.astro';
 import ProjectLinks from './ProjectLinks.astro';
 import type { Locale } from '../i18n/ui';
 import { t } from '../i18n/ui';
-import { siteMeta, projectsByGroup } from '../data/site';
+import { siteMeta, projects } from '../data/site';
+import { getLabExtra, labCats, labUi } from '../data/lab';
 import type { Project } from '../data/site';
 
 interface Props {
@@ -14,10 +15,20 @@ interface Props {
 
 const { locale } = Astro.props;
 const title = `${t(locale, 'navWork')} — ${siteMeta.name}`;
-const groups = [
-  { title: t(locale, 'workGroupLead'), items: projectsByGroup('lead'), open: true },
-  { title: t(locale, 'workGroupOther'), items: projectsByGroup('other'), open: false },
-];
+// Same zones as the Robot Lab; Val Qauym is listed first, at the top of the Discord bots group.
+const groups = labCats
+  .filter(([cat]) => cat !== 'valqauym')
+  .map(([cat, label]) => ({
+    cat,
+    title: label[locale],
+    items: projects.filter((p) => {
+      const c = getLabExtra(p.id).cat;
+      return c === cat || (cat === 'bots' && c === 'valqauym');
+    }),
+  }))
+  .filter((g) => g.items.length > 0);
+const pluralRules = new Intl.PluralRules(locale);
+const countLabel = (n: number) => labUi[locale].plural[pluralRules.select(n) as 'one' | 'few' | 'many' | 'other'].replace('{n}', String(n));
 const chips = (project: Project) =>
   (project.stack ?? '')
     .split(/\s*[,·]\s*/)
@@ -36,13 +47,18 @@ const chips = (project: Project) =>
 
       {
         groups.map((group) => (
-          <section class="section">
+          <section class="section" id={group.cat}>
+            <p class="zone-tag">
+              {t(locale, 'zoneWord')} · {countLabel(group.items.length)}
+            </p>
             <h2 class="section__title">{group.title}</h2>
             <div class="dossier">
               {group.items.map((project) => (
-                <details class="entry" open={group.open}>
+                <details class="entry" open={project.group === 'lead'}>
                   <summary class="entry__bar">
-                    <span class="entry__name">{project.name}</span>
+                    <span class="entry__name">
+                      {project.name} <small class="entry__big">{getLabExtra(project.id).big}</small>
+                    </span>
                     <span class="entry__role">{project.role[locale]}</span>
                     <span class="entry__dates">{project.dates[locale]}</span>
                     <span class="entry__toggle" aria-hidden="true"></span>

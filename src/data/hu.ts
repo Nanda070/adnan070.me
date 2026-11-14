@@ -47,11 +47,12 @@ export const huProjects: Record<string, HuProject> = {
   },
   valqauym: {
     dates: '2026 — jelenleg',
-    role: 'Alkotó, jelenleg a fejlesztőcsapat vezetője',
-    summary: 'Discord-bot és weboldal a kazahsztáni VALORANT-közösségnek: sorok (queue) és eszközök.',
+    role: 'Alkotó, a fejlesztőcsapat vezetője',
+    summary: 'Bot, weboldal, admin panel és gazdaság a Val Qauym kazahsztáni VALORANT-közösségnek.',
     bullets: [
-      'Én hoztam létre a projektet; később egy másik személynek adtam át a tulajdonjogot, aki a nyilvános arca lett. A fejlesztőcsapatot továbbra is én vezetem. A szerzőség a valqauym.kz credits oldalán szerepel.',
-      'Sorok és eszközök a kazahsztáni VALORANT-közösségnek.',
+      'Én hoztam létre a projektet, és én vezetem a fejlesztőcsapatot; a tulajdonjog később egy másik személyhez került, aki a nyilvános arca lett. A szerzőség a valqauym.kz credits oldalán szerepel.',
+      'Esti 5v5 custom meccsek teljes folyamata: lobbik, csapatkiegyenlítés, pályaszavazás, hangcsatornákba mozgatás, automatikus meccszárás és szezonális Elo a csapat győzelmi esélye és a játékos ACS/KDA értéke alapján.',
+      'Egy folyamat futtatja a botot (~33 modul) és a HTTP API-t (~44 csoport) egy React weboldal és admin panel mögött: szintek, érmék és bolt, családok, tornák, böngészős játékesemények WebSocketen. ~945 tagú szerver (2026. november).',
     ],
   },
   lookup: {
